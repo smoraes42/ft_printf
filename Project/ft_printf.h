@@ -5,27 +5,26 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: smoraes- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/02/01 23:28:08 by smoraes-          #+#    #+#             */
-/*   Updated: 2024/03/04 11:19:10 by smoraes-         ###   ########.fr       */
+/*   Created: 2024/03/10 15:58:21 by smoraes-          #+#    #+#             */
+/*   Updated: 2024/03/12 12:46:38 by smoraes-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef PRINTF_H
-# define PRINTF_H
-# define FD 1
-# include <stdarg.h>
+#ifndef FT_PRINTF_H
+# define FT_PRINTF_H
+
 # include <unistd.h>
+# include <stdarg.h>
+# include <limits.h>
 
-void	ft_putchar_fd(size_t count, va_list params);
-void	ft_putnbr_fd(size_t count, va_list params);
-void	ft_putstr_fd(size_t count, va_list params);
-
-size_t	ft_strlen(const char *s);
-void	ft_put_ulong_fd(unsigned long n, int fd);
-void	ft_put_uint_fd(unsigned int n, int fd);
-void	ft_puthex_frmt_fd(unsigned long n, int fd);
-void	ft_puthex_frmt_mayus_fd(unsigned long n, int fd);
-void	ft_puthex_fd(unsigned long n, int fd);
-void	ft_puthex_mayus_fd(unsigned long n, int fd);
+int	ft_printf(const char *format, ...);
+int	ft_putptr(void *ptr);
+int	ft_putnbr(char *subs, long d, int base);
+int	ft_putuint(char *subs, unsigned int d, int base);
+int	ft_putuintptr(char *subs, unsigned long d, int base);
+int	ft_putchar(int ch);
+int	ft_putstr(char *str);
+int	ft_puthex(char *subs, unsigned int d, int base);
+int	formatspec(const char *format, va_list params);
 
 #endif

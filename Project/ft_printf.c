@@ -5,65 +5,91 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: smoraes- <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/02/01 23:19:13 by smoraes-          #+#    #+#             */
-/*   Updated: 2024/03/04 11:34:45 by smoraes-         ###   ########.fr       */
+/*   Created: 2024/03/10 15:57:11 by smoraes-          #+#    #+#             */
+/*   Updated: 2024/03/12 12:52:19 by smoraes-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_printf.h"
 
-void	formatspec(const char *format, size_t *count, va_list params);
-
-int	ft_printf(const char *strng, ...)
+int	ft_printf(const char *format, ...)
 {
-	size_t	i;
-	size_t	count;
-	size_t	lstrprnt;
+	int		flag;
+	int		count;
 	va_list	params;
 
-	i = 0;
+	flag = 0;
 	count = 0;
-	lstrprnt = ft_strlen(strng);
-	va_start(params, strng);
-	while (i < lstrprnt)
+	va_start(params, format);
+	while (*format != '\0')
 	{
-		while (strng[i] != '%' && strng[i] != '\0')
+		if (*format == '%')
 		{
-			if ((write(1, &strng[++i], 1)) == -1)
-				return (0);
-			else
-				count++;
+			format++;
+			flag = formatspec(format, params);
 		}
-		if (strng[i] == '%')
-		{
-			i++;
-			formatspec(&strng[i], &count, params);
-		}
+		else
+			flag = write(1, format, 1);
+		if (flag == -1)
+			return (-1);
+		count += flag;
+		if (*format != '\0')
+			format++;
 	}
+	va_end(params);
 	return (count);
 }
 
-
-
-void formatspec(const char *format,  size_t *count, va_list params)
+int	formatspec(const char *format, va_list params)
 {
-	if (*format == 'c')
-		ft_putchar_fd(*count, params);
-	else if ( *format == 's')
-		ft_putstr_fd(*count, params);
+	if (*format == '%')
+		return (ft_putchar('%'));
+	else if (*format == 'c')
+		return (ft_putchar(va_arg(params, int)));
+	else if ((*format == 'd') || (*format == 'i'))
+		return (ft_putnbr("0123456789", (va_arg(params, int)), 10));
+	else if (*format == 'x')
+		return (ft_puthex("0123456789abcdef", \
+					(va_arg(params, unsigned int)), 16));
+	else if (*format == 'X')
+		return (ft_puthex("0123456789ABCDEF", \
+					(va_arg(params, long long)), 16));
+	else if (*format == 's')
+		return (ft_putstr(va_arg(params, char *)));
 	else if (*format == 'p')
-		ft_puthex_fd(*count, params);
-	else if (*format == 'd')
-		ft_putnbr_fd(*count, params);
-	else if ( *format == 'i')
-		;
-	else if ( *format == 'u')
-		;
-	else if ( *format == 'x')
-		;
-	else if ( *format == 'X')
-		;
-	else if ( *format == '%')
-		;
+		return (ft_putptr(va_arg(params, void *)));
+	else if (*format == 'u')
+		return (ft_putuint("0123456789", va_arg(params, unsigned long), 10));
+	return (-1);
 }
 
+int	ft_putchar(int ch)
+{
+	return (write(1, &ch, 1));
+}
+
+int	ft_putstr(char *str)
+{
+	int	count;
+	int	flag;
+
+	flag = 0;
+	count = 0;
+	if (!str)
+	{
+		flag = write(1, "(null)", 6);
+		if (flag == -1)
+			return (-1);
+		count = 6;
+		return (count);
+	}
+	while (*str != '\0')
+	{
+		flag = ft_putchar(*str);
+		if (flag == -1)
+			return (-1);
+		count += flag;
+		str++;
+	}
+	return (count);
+}
